@@ -28,20 +28,12 @@
         </div>
       </nav>
 
-      <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <h2 class="display-4">Prodotti</h2>
-                <ul id="appointment-list" class="list-group">
-                    
-
-                    <div class="spinner-grow text-info" role="status">
-                        <span class="visually-hidden">Caricamento...</span>
-                    </div>
-                </ul>
-            </div>
-        </div>
-    </div>
+      <div class="container">
+        <h1 class="mt-5">Prodotti</h1>
+        <hr />
+        <div id="card-columns" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-5 g-4"></div>
+      </div>
+    
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js
@@ -49,7 +41,38 @@
 
 
     <script>
+      const BASE_URL = "https://striveschool-api.herokuapp.com/api/product/";
+      const headers = new Headers({
+        "Content-Type": "application/json",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDE3ODIzZDFiOWIwMTAwMTM3YmUyNTYiLCJpYXQiOjE2NzkyNjIyNjksImV4cCI6MTY4MDQ3MTg2OX0.x1wvayoCoZIFLo32BZlFdDDjRfDFJ3gK8gQz1YkjwdE"
+      }
+      );
 
+      window.onload = function () {
+      fetch(BASE_URL, { headers })
+        .then((res) => res.json())
+        .then((data) => {
+          const content = document.getElementById("card-columns");
+          content.innerHTML = "";
+
+          data.forEach((product) => {
+            content.innerHTML += `<div class="col">
+                                    <div class="card">
+                                      <img src="${product.urlimg}" class="card-img-top" alt="..." />
+                                      <div class="card-body">
+                                        <h5 class="card-title">${product.name}</h5>
+                                        <p class="card-text">
+                                          ${product.description}
+                                        </p>
+                                        <a class="btn btn-warning me-2 mb-1" href="back-office.html?id=${product._id}">Modifica</a>
+                                        <a class="btn btn-info" href="product.html?id=${product._id}">Dettagli</a>
+                                      </div>
+                                    </div>
+                                  </div >`;
+          });
+        })
+        .catch((error) => console.log({ error }));
+    };
     </script>
 
     <!--A causa di un'emergenza sono riuscito a iniziare il lavoro solo durante l'ultima mezz'ora di tempo. Chiedo scusa per questo imprevisto, mi impegnerò a finire il progetto domani.-->

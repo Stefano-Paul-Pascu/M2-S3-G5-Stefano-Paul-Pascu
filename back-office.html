@@ -36,7 +36,7 @@
                     <span class="visually-hidden">Caricamento...</span>
                 </div>
                 <hr class="border-secondary">
-                <form class="mt-4" onsubmit="handleSubmit(event)">
+                <form id="myform" class="mt-4" onsubmit="handleSubmit(event)">
                     <div class="mb-3">
                         <label for="name" class="form-label">Nome Prodotto</label>
                         <input type="text" class="form-control" id="name" placeholder="Inserisci un nome"
@@ -55,18 +55,78 @@
                             required>
                         <div class="form-text text-danger">*Campo obbligatorio</div>
                     </div>
+                    <div class="mb-3">
+                        <label for="imageUrl" class="form-label">URL Immagine</label>
+                        <input type="text" class="form-control" id="imageUrl" placeholder="URL immagine" required
+                          aria-describedby="imageUrl">
+                      </div>
                     <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-secondary">Cancella</button>
-                        <button type="submit" class="btn btn-primary me-auto" onclick="handleValidate()">Aggiungi</button>
+                        <button type="reset" onclick="resetFields(event)" class="btn btn-outline-secondary">Cancella</button>
+                        <button type="submit" class="btn btn-primary me-auto">Aggiungi</button>
                         <button id="delete-btn" type="button" class="btn btn-danger d-none"
-                            onclick="handleDelete()">Delete</button>
+                            onclick="handleDelete()">Elimina</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 
-    <script src="<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js
-    " integrity="" crossorigin="anonymous"></script>"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js
+    " integrity="" crossorigin="anonymous"></script>
+
+    <script>
+      const params = new URLSearchParams(location.search)
+      const id = params.get('id')
+
+      const BASE_URL = "https://striveschool-api.herokuapp.com/api/product/";
+      const headers = new Headers({
+      "Content-Type": "application/json",
+      "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NDE3ODIzZDFiOWIwMTAwMTM3YmUyNTYiLCJpYXQiOjE2NzkyNjIyNjksImV4cCI6MTY4MDQ3MTg2OX0.x1wvayoCoZIFLo32BZlFdDDjRfDFJ3gK8gQz1YkjwdE"
+      });
+
+      const method = id ? "PUT" : "POST"
+
+        const invioProdotto = (prodotto, callback) => {
+          const endpoint = id ? BASE_URL + id : BASE_URL
+          
+          fetch(endpoint, {
+            headers,
+            method,
+            body: JSON.stringify(prodotto),
+          })
+          .then((res) => res.json())
+          .then((data) => callback(null, data))
+          .catch((error) => callback(error, null));
+        };
+
+       const resetFields = (e) => {
+          document.getElementById("myForm").reset();
+        }
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          const nomeProdotto = document.getElementById("name").value;
+          const descrizione = document.getElementById("description").value;
+          const prezzo = document.getElementById("price").value;
+          const urlimg = document.getElementById("imageUrl").value;
+
+          const prodotto = {nomeProdotto, descrizione, prezzo, urlimg};
+          
+          console.log(prodotto, 'Il nostro prodotto')
+
+          invioProdotto(prodotto, (err, data) => {
+          if (err) {
+            alert(err.message)
+          } else {
+            e.target.reset();
+            window.location.replace("/");
+          }
+        });
+        };
+
+
+
+    </script>
+
 </body>
 </html>
